@@ -1,0 +1,89 @@
+PROC IMPORT 
+		DATAFILE='\\SBMDEBPSGF02C\FILE_VSPC_MEDIOS_DE_PAGO\Obligaciones_clientes.xlsx' 
+		DBMS=EXCELCS OUT=WORK.Obligaciones_clientes REPLACE;
+	TEXTSIZE=32767;
+	PORT=9621;
+	SERVER='SBMDEBPSGF02C';
+	SHEET='Obligaciones_clientes';
+RUN;
+
+PROC IMPORT 
+		DATAFILE='\\SBMDEBPSGF02C\FILE_VSPC_MEDIOS_DE_PAGO\tasas_productos.xlsx' 
+		DBMS=EXCELCS OUT=WORK.tasas_productos REPLACE;
+	TEXTSIZE=32767;
+	PORT=9621;
+	SERVER='SBMDEBPSGF02C';
+	SHEET='Tasas';
+RUN;
+
+%macro capturar_ambiente();
+	data _null_;
+		set SASHELP.VMACRO (obs=1);
+		where name IN ('_BASEURL', '_SASHOSTNAME');
+		call symputx('_SERVIDOR', cats(scan(value, 2, '.'), '.', scan(scan(value, 3, 
+			'.'), 1, ':')), 'G');
+
+		if scan(value, 2, '.')='bancolombia' then
+			call symputx('_AMBIENTE', 'P', 'G');
+		else if scan(value, 2, '.')='ambientesbc' then
+			call symputx('_AMBIENTE', 'C', 'G');
+	run;
+
+%mend capturar_ambiente;
+
+%capturar_ambiente;
+%let SERVMAY=%upcase(&_SERVIDOR.);
+%include "/data/Programas_SAS/activenodelzcode.sas";
+
+proc sql;
+	libname LIB_PRO IMPALA DSN=IMPALA&_AMBIENTE. DATABASE=proceso direct_sql=yes;
+	connect to IMPALA (DSN=IMPALA&_AMBIENTE.);
+	execute by IMPALA (set SYNC_DDL=1);
+	%if optYES eq optYES %then %do;
+	execute by impala (set PARQUET_FILE_SIZE=256m);
+	execute by impala (SET NUM_NODES=1);
+	%end;
+	execute by IMPALA (drop table if exists proceso.OBLIGACIONES_CLIENTES_t purge);
+	create table LIB_PRO.OBLIGACIONES_CLIENTES_t 
+		(bulkload=YES bl_host="&Nodo..&_SERVIDOR." bl_port=8020 
+		bl_datafile="/tmp_sas/&SYSUSERID..dat" BL_DELETE_DATAFILE=YES 
+		HDFS_PRINCIPAL="hdfs/_HOST@&SERVMAY." POST_STMT_OPTS="TBLPROPERTIES ('transactional'='false', 'NO_AUTO_COMPACTION'='true')") 
+		as select radicado , num_documento , cod_segm_tasa , cod_subsegm_tasa , 
+		cal_interna_tasa , id_producto , tipo_id_producto , valor_inicial , 
+		fecha_desembolso , plazo , cod_periodicidad , periodicidad , saldo_deuda , 
+		modalidad , tipo_plazo from WORK.OBLIGACIONES_CLIENTES;
+	execute by impala (drop table if exists proceso.OBLIGACIONES_CLIENTES purge);
+	execute by impala (create table proceso.OBLIGACIONES_CLIENTES stored as 
+		parquet TBLPROPERTIES ('transactional'='false', 'NO_AUTO_COMPACTION'='true') 
+		as SELECT * FROM proceso.OBLIGACIONES_CLIENTES_t;
+	);
+	execute by impala (drop table if exists proceso.OBLIGACIONES_CLIENTES_t purge);
+	execute by impala (COMPUTE STATS proceso.OBLIGACIONES_CLIENTES);
+	disconnect from IMPALA;
+quit;
+
+proc sql;
+	libname LIB_PRO IMPALA DSN=IMPALA&_AMBIENTE. DATABASE=proceso direct_sql=yes;
+	connect to IMPALA (DSN=IMPALA&_AMBIENTE.);
+	execute by IMPALA (set SYNC_DDL=1);
+	%if optYES eq optYES %then %do;
+	execute by impala (set PARQUET_FILE_SIZE=256m);
+	execute by impala (SET NUM_NODES=1);
+	%end;
+	execute by IMPALA (drop table if exists proceso.TASAS_PRODUCTOS_t purge);
+	create table LIB_PRO.TASAS_PRODUCTOS_t 
+		(bulkload=YES bl_host="&Nodo..&_SERVIDOR." bl_port=8020 
+		bl_datafile="/tmp_sas/&SYSUSERID..dat" BL_DELETE_DATAFILE=YES 
+		HDFS_PRINCIPAL="hdfs/_HOST@&SERVMAY." POST_STMT_OPTS="TBLPROPERTIES ('transactional'='false', 'NO_AUTO_COMPACTION'='true')") 
+		as select cod_segmento , segmento , cod_subsegmento , calificacion_riesgos , 
+		tasa_cartera , tasa_operacion_especifica , tasa_hipotecario , tasa_leasing , 
+		tasa_sufi , tasa_factoring , tasa_tarjeta from WORK.TASAS_PRODUCTOS;
+	execute by impala (drop table if exists proceso.TASAS_PRODUCTOS purge);
+	execute by impala (create table proceso.TASAS_PRODUCTOS stored as parquet 
+		TBLPROPERTIES ('transactional'='false', 'NO_AUTO_COMPACTION'='true') as 
+		SELECT * FROM proceso.TASAS_PRODUCTOS_t;
+	);
+	execute by impala (drop table if exists proceso.TASAS_PRODUCTOS_t purge);
+	execute by impala (COMPUTE STATS proceso.TASAS_PRODUCTOS);
+	disconnect from IMPALA;
+quit;
