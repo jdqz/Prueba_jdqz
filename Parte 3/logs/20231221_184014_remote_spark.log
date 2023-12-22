@@ -1,0 +1,29 @@
+2023-12-21 18:40:14 - [INFO] - --------------------------------------------------
+2023-12-21 18:40:14 - [INFO] - REMOTE SPARK
+2023-12-21 18:40:14 - [INFO] - --------------------------------------------------
+2023-12-21 18:40:14 - [INFO] - Guardado logs en: C:\Users\jdquinte\Documents\Prueba Torre Control\Parte 3\logs\20231221_184014_remote_spark.log
+2023-12-21 18:40:27 - [INFO] - Se agregaron 1 consultas al plan de ejecucion
+2023-12-21 18:40:27 - [INFO] - Inicia la ejecucion de la siguiente consulta:
+            SELECT radicado,producto,valor_inicial,plazo,periodicidad,saldo_deuda,tasa_efectiva,valor_final FROM proceso.obligaciones_clientes_final WHERE num_documento = 14427615183.0
+2023-12-21 18:40:27 - [INFO] - Finaliza obtener_dataframe, duracion: 00:00.2
+2023-12-21 18:40:27 - [INFO] - 0 filas, 8 columnas, 00:00.1 consultando, 00:00.0 descargando, 00:00.0 convirtiendo
+2023-12-21 18:41:05 - [INFO] - Se agregaron 1 consultas al plan de ejecucion
+2023-12-21 18:41:05 - [INFO] - Inicia la ejecucion de la siguiente consulta:
+            SELECT radicado,producto,valor_inicial,plazo,periodicidad,saldo_deuda,tasa_efectiva,valor_final FROM proceso.obligaciones_clientes_final WHERE num_documento = 1081648945.0
+2023-12-21 18:41:05 - [INFO] - Finaliza obtener_dataframe, duracion: 00:00.1
+2023-12-21 18:41:05 - [INFO] - 1 filas, 8 columnas, 00:00.0 consultando, 00:00.0 descargando, 00:00.0 convirtiendo
+2023-12-21 18:41:41 - [INFO] - Se agregaron 1 consultas al plan de ejecucion
+2023-12-21 18:41:41 - [INFO] - Inicia la ejecucion de la siguiente consulta:
+            SELECT valor_final FROM proceso.obligaciones_clientes_unico WHERE num_documento = 2322878.0
+2023-12-21 18:41:41 - [INFO] - Finaliza obtener_dataframe, duracion: 00:00.1
+2023-12-21 18:41:41 - [INFO] - 0 filas, 1 columnas, 00:00.1 consultando, 00:00.0 descargando, 00:00.0 convirtiendo
+2023-12-21 18:42:32 - [INFO] - Se agregaron 1 consultas al plan de ejecucion
+2023-12-21 18:42:32 - [INFO] - Inicia la ejecucion de la siguiente consulta:
+            SELECT valor_final FROM proceso.obligaciones_clientes_unico WHERE num_documento = 1081578976.0
+2023-12-21 18:42:33 - [INFO] - Finaliza obtener_dataframe, duracion: 00:00.1
+2023-12-21 18:42:33 - [INFO] - 1 filas, 1 columnas, 00:00.1 consultando, 00:00.0 descargando, 00:00.0 convirtiendo
+2023-12-21 18:43:39 - [INFO] - Se agregaron 1 consultas al plan de ejecucion
+2023-12-21 18:43:39 - [INFO] - Inicia la ejecucion de la siguiente consulta:
+            SELECT valor_final FROM proceso.obligaciones_clientes_unico WHERE num_documento = 3907738.0
+2023-12-21 18:43:39 - [INFO] - Finaliza obtener_dataframe, duracion: 00:00.1
+2023-12-21 18:43:39 - [INFO] - 1 filas, 1 columnas, 00:00.0 consultando, 00:00.0 descargando, 00:00.0 convirtiendo

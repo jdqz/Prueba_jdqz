@@ -1,0 +1,15 @@
+2023-12-21 18:24:28 - [INFO] - --------------------------------------------------
+2023-12-21 18:24:28 - [INFO] - REMOTE SPARK
+2023-12-21 18:24:28 - [INFO] - --------------------------------------------------
+2023-12-21 18:24:28 - [INFO] - Guardado logs en: C:\Users\jdquinte\Documents\Prueba Torre Control\Parte 3\logs\20231221_182428_remote_spark.log
+2023-12-21 18:28:37 - [INFO] - Se agregaron 1 consultas al plan de ejecucion
+2023-12-21 18:28:37 - [INFO] - Inicia la ejecucion de la siguiente consulta:
+            SELECT radicado,producto,valor_inicial,plazo,periodicidad,saldo_deuda,tasa_efectiva,valor_final FROM proceso.obligaciones_clientes_final WHERE num_documento = 14427615183.0
+2023-12-21 18:28:37 - [ERROR] - Error en ejecucion de consulta
+Traceback (most recent call last):
+  File "c:\users\jdquinte\documents\prueba torre control\venv\lib\site-packages\helper\helper.py", line 725, in _reStarter
+    cursor.execute(consulta)
+pyodbc.Error: ('HY000', "[HY000] [Cloudera][ImpalaODBC] (370) Query analysis error occurred during query execution: [HY000] : AnalysisException: Could not resolve table reference: 'proceso.obligaciones_clientes_final'\n (370) (SQLExecDirectW)")
+2023-12-21 18:28:37 - [ERROR] - 
+            [HY000] [Cloudera][ImpalaODBC] (370) Query analysis error occurred during query execution: [HY000] : AnalysisException: Could not resolve table reference: 'proceso.obligaciones_clientes_final'
+             (370) (SQLExecDirectW)
